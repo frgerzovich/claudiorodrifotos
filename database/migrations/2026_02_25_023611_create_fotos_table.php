@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fotos', function (Blueprint $table) {
-            $table->id();
-            $table->timestamp("fecha_subida")->useCurrent(); 
-            $table->string("titulo");
-            $table->text("descripcion")->nullable();
-            $table->string("tipo");
+        Schema::create('photos', function (Blueprint $table) {
+            $table->id(); 
+            $table->string("title");
+            $table->text("description")->nullable();
+            $table->string("type");
             // 8 y 2 son la cantidad de caracteres que puede tener el entero y el decimal respectivamente
-            $table->decimal("precio", 8, 2);
-            $table->string("archivo");
+            $table->decimal("price", 8, 2);
+            $table->string("file_path");
             $table->string("preview");
-            $table->unsignedBigInteger("usuario_id"); //clave foranea para relacionar con usuarios
-            //relacion entre tablas, indicando que el campo usuario_id hace referencia al campo id de la tabla usuarios, y que si se borra un usuario, se borren sus fotos
-            $table->foreign("usuario_id")->references("id")->on("usuarios")->onDelete("cascade"); 
+            $table->foreignId('user_id')
+            ->constrained()
+            ->cascadeOnDelete(); 
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fotos');
+        Schema::dropIfExists('photos');
     }
 };

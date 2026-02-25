@@ -11,14 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('items_pedido', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("pedido_id"); 
-            $table->foreign("pedido_id")->references("id")->on("pedidos")->onDelete("cascade");
-            $table->unsignedBigInteger("foto_id");
-            $table->foreign("foto_id")->references("id")->on("fotos")->onDelete("cascade");
-            $table->integer("cantidad");
-            $table->decimal("precio_unitario", 8, 2); 
+
+            $table->foreignId('order_id')
+                  ->constrained()
+                  ->cascadeOnDelete();
+
+            $table->foreignId('photo_id')
+                  ->constrained()
+                  ->nullOnDelete(); // si borran la foto, el item queda con photo_id = null
+
+            $table->integer('quantity');
+            $table->decimal('unit_price', 8, 2);
+
+            $table->timestamps();
         });
     }
 
@@ -27,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('items_pedido');
+        Schema::dropIfExists('order_items');
     }
 };

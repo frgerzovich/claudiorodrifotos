@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pedidos', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string("nombre_cliente");
-            $table->string("email_cliente");
-            $table->string("direccion_cliente")->nullable();
-            $table->string("telefono_cliente");
+            $table->string("buyer_name");
+            $table->string("buyer_email");
+            $table->string("buyer_address")->nullable();
+            $table->string("buyer_phone");
             $table->decimal("total", 8, 2);
-            $table->enum('status', ['pendiente','pagado','enviado','recibido'])->default('pendiente');
+            $table->enum('status', ['pending','paid','shipped','received'])->default('pending');
             $table->timestamps(); 
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pedidos');
+        Schema::dropIfExists('orders');
     }
 };

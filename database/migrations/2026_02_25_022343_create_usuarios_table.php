@@ -11,13 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('usuarios', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string("nombre");
-            $table->string("email", 191)->unique();
-            $table->string("contraseña");
-            $table->text("descripcion")->nullable(); //nullable para permitir que sea opcional, ya que sino son requeridos por defecto!! 
-            $table->string("rol");
+
+            $table->string('name');
+            $table->string('email', 191)->unique();
+
+            $table->string('password'); 
+            $table->text('description')->nullable(); 
+
+            $table->enum('role', ['admin', 'photographer'])
+                  ->default('photographer'); 
+
+            $table->rememberToken(); 
         });
     }
 
@@ -26,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('usuarios');
+        Schema::dropIfExists('users');
     }
 };

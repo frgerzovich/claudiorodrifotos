@@ -1,5 +1,4 @@
-# Proyecto Fotografía
-
+# Proyecto ClaudioRodri  Fotos
 Proyecto de ecommerce para vender fotos digitales e impresiones.  
 Stack: Laravel 11 + Blade + Bootstrap + Vue (puntual) + MySQL + MercadoPago.
 

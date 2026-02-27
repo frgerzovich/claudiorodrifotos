@@ -19,7 +19,7 @@ return new class extends Migration
             // 8 y 2 son la cantidad de caracteres que puede tener el entero y el decimal respectivamente
             $table->decimal("price", 8, 2);
             $table->string("file_path");
-            $table->string("preview");
+            $table->string("preview_path");
             $table->foreignId('user_id')
             ->constrained()
             ->cascadeOnDelete(); 

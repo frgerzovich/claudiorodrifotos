@@ -22,6 +22,14 @@ Ecommerce web application for selling digital photography and physical prints.
 - Digital downloads
 - Payment integration
 
+- ## How to run the project
+
+1. Clone the repository  
+2. Run 'composer install' 
+3. Configure .env  
+4. Run php 'artisan migrate'  
+5. Start the server 
+
 ## About
 This project is currently in an early development stage, focused on building a scalable backend structure for a real-world photography business.
 

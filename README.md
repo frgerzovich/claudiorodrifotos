@@ -1,12 +1,29 @@
-# Proyecto ClaudioRodri Fotos
+# Photography Ecommerce (Laravel)
 
-Proyecto de ecommerce para vender fotos digitales e impresiones.  
-Stack: Laravel 11 + Blade + Bootstrap + Vue (puntual) + MySQL + MercadoPago.
+Ecommerce web application for selling digital photography and physical prints.
 
-## Cómo correr localmente
+## Tech stack
+- PHP
+- Laravel 11
+- Blade
+- Bootstrap
+- Vue.js (partial use)
+- MySQL
+- MercadoPago (planned integration)
 
-1. Clonar el repo
-2. `composer install`
-3. `npm install`
-4. `php artisan serve`
-5. `npm run dev`
+## Current progress
+- Database design using Laravel migrations
+- Core models definition
+
+## Planned features
+- User authentication
+- Product management (digital & physical)
+- Shopping cart and checkout
+- Digital downloads
+- Payment integration
+
+## About
+This project is currently in an early development stage, focused on building a scalable backend structure for a real-world photography business.
+
+## Author
+Francesca Rodríguez Gerzovich 

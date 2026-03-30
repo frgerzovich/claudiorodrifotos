@@ -22,7 +22,7 @@ Ecommerce web application for selling digital photography and physical prints.
 - Digital downloads
 - Payment integration
 
-- ## How to run the project
+## How to run the project
 
 1. Clone the repository  
 2. Run 'composer install' 

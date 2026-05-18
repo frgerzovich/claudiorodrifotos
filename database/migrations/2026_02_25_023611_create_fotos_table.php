@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id(); 
             $table->string("title");
             $table->text("description")->nullable();
-            $table->string("type");
             // 8 y 2 son la cantidad de caracteres que puede tener el entero y el decimal respectivamente
             $table->decimal("price", 8, 2);
             $table->string("file_path");

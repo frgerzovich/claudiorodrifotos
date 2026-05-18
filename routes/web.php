@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
 
 Route::get('/dashboard', function () {
@@ -15,6 +18,42 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+//fotos
+Route::get('/photos', [PhotoController::class, 'index'])->name('photos.index');
+Route::get('/photos/{photo}', [PhotoController::class, 'show'])->name('photos.show');
+
+//pedidos
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+Route::post('/checkout', [OrderController::class, 'store'])->name('orders.store');
+
+//usuarios
+Route::middleware(['auth'])->group(function () {
+
+    // 👥 usuarios (admin-only en controller)
+    Route::get('/users', [UserController::class, 'index'])
+        ->name('users.index');
+
+    Route::get('/users/create', [UserController::class, 'create'])
+        ->name('users.create');
+
+    Route::post('/users', [UserController::class, 'store'])
+        ->name('users.store');
+
+    Route::get('/users/{user}', [UserController::class, 'show'])
+        ->name('users.show');
+
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+        ->name('users.edit');
+
+    Route::put('/users/{user}', [UserController::class, 'update'])
+        ->name('users.update');
+
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])
+        ->name('users.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -27,6 +27,8 @@ return new class extends Migration
             $table->string("type");
 
             $table->timestamps();
+            $table->foreignId('photographer_id')->nullable()->constrained('users');
+            $table->string('print_size')->nullable();
         });
     }
 

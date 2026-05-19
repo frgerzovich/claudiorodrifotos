@@ -5,6 +5,7 @@ use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AlbumController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,7 +23,6 @@ Route::middleware('auth')->group(function () {
 });
 
 //fotos
-// fotos
 
 Route::get('/photos', [PhotoController::class, 'index'])
     ->name('photos.index');
@@ -34,6 +34,17 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/photos', [PhotoController::class, 'store'])
         ->name('photos.store');
+
+    Route::get('/photos/{photo}/edit', [PhotoController::class, 'edit'])
+        ->name('photos.edit');
+
+    Route::put('/photos/{photo}', [PhotoController::class, 'update'])
+        ->name('photos.update');
+
+    Route::delete('/photos/{photo}', [PhotoController::class, 'destroy'])
+        ->name('photos.destroy');
+    Route::delete('/photos/{photo}/force', [PhotoController::class, 'forceDestroy'])
+        ->name('photos.forceDestroy');
 
 });
 
@@ -99,7 +110,11 @@ Route::middleware('auth')->group(function () {
         ->name('albums.destroy');
 
 });
-
+//dashboard
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+});
 
 
 require __DIR__.'/auth.php';

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\UserRole;
+use App\Models\Photo;
 
 class User extends Authenticatable
 {
@@ -40,7 +41,20 @@ class User extends Authenticatable
     {
         return $this->role === UserRole::PHOTOGRAPHER;
     }
-    /**
+    public function ownsPhoto(Photo $photo){
+        return $this->id === $photo->user_id;
+    }
+    public function canManagePhoto(Photo $photo){
+        return $this->ownsPhoto($photo)|| $this->isAdmin();
+    }
+
+    public function ensureCanManagePhoto(Photo $photo): void{
+        abort_unless($this->canManagePhoto($photo), 403);
+    }
+    public function ensureAdmin(): void{
+        abort_unless($this->isAdmin(), 403);
+    }
+        /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>

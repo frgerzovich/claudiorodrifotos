@@ -1,18 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $photo->title }} - {{$photo->user->name}}</title>
+@extends('layouts.app')
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-</head>
-<body>
+@section('title', $photo->title . ' - ' . $photo->user->name)
 
-<div class="container py-5">
+@section('content')
+
+<div class="container">
 
     <a
         href="{{ route('photos.index') }}"
@@ -25,8 +17,9 @@
 
         <div class="col-md-7">
 
-            <img        
-                src="{{ asset('storage/' . $photo->file_path) }}"                alt="{{ $photo->title }}"
+            <img
+                src="{{ asset('storage/' . $photo->file_path) }}"
+                alt="{{ $photo->title }}"
                 class="img-fluid rounded shadow"
             >
 
@@ -50,9 +43,45 @@
 
             </div>
 
-            <button class="btn btn-dark w-100">
-                Agregar al carrito
-            </button>
+            @auth
+                @if(auth()->user()->canManagePhoto($photo))
+
+                    <a
+                        href="{{ route('photos.edit', $photo) }}"
+                        class="btn btn-outline-primary w-100 mb-2"
+                    >
+                        Editar foto
+                    </a>
+
+                    <form
+                        action="{{ route('photos.destroy', $photo) }}"
+                        method="POST"
+                    >
+                        @csrf
+                        @method('DELETE')
+
+                        <button
+                            class="btn btn-outline-danger w-100"
+                            onclick="return confirm('¿Eliminar foto?')"
+                        >
+                            Eliminar foto
+                        </button>
+                    </form>
+
+                @else
+
+                    <button class="btn btn-dark w-100">
+                        Agregar al carrito
+                    </button>
+
+                @endif
+            @else
+
+                <button class="btn btn-dark w-100">
+                    Agregar al carrito
+                </button>
+
+            @endauth
 
         </div>
 
@@ -60,5 +89,4 @@
 
 </div>
 
-</body>
-</html>
+@endsection

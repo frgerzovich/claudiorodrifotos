@@ -22,9 +22,23 @@ Route::middleware('auth')->group(function () {
 });
 
 //fotos
-Route::get('/photos', [PhotoController::class, 'index'])->name('photos.index');
-Route::get('/photos/{photo}', [PhotoController::class, 'show'])->name('photos.show');
+// fotos
 
+Route::get('/photos', [PhotoController::class, 'index'])
+    ->name('photos.index');
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/photos/create', [PhotoController::class, 'create'])
+        ->name('photos.create');
+
+    Route::post('/photos', [PhotoController::class, 'store'])
+        ->name('photos.store');
+
+});
+
+Route::get('/photos/{photo}', [PhotoController::class, 'show'])
+    ->name('photos.show');
 //pedidos
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
@@ -33,8 +47,6 @@ Route::post('/checkout', [OrderController::class, 'store'])->name('orders.store'
 
 //usuarios
 Route::middleware(['auth'])->group(function () {
-
-    //  usuarios 
     Route::get('/users', [UserController::class, 'index'])
         ->name('users.index');
 
@@ -66,26 +78,28 @@ Route::get('/albums/{album:url}', [AlbumController::class, 'show'])
 
 Route::post('/albums/{album:url}/access', [AlbumController::class, 'access'])
     ->name('albums.access');
-    
+
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard/albums/create', [AlbumController::class, 'create'])
+    Route::get('/albums/create', [AlbumController::class, 'create'])
         ->name('albums.create');
 
 
-    Route::post('/dashboard/albums', [AlbumController::class, 'store'])
+    Route::post('/albums', [AlbumController::class, 'store'])
         ->name('albums.store');
 
-    Route::get('/dashboard/albums/{album:url}/edit', [AlbumController::class, 'edit'])
+    Route::get('/albums/{album:url}/edit', [AlbumController::class, 'edit'])
         ->name('albums.edit');
 
 
-    Route::put('/dashboard/albums/{album:url}', [AlbumController::class, 'update'])
+    Route::put('/albums/{album:url}', [AlbumController::class, 'update'])
         ->name('albums.update');
 
    
-    Route::delete('/dashboard/albums/{album:url}', [AlbumController::class, 'destroy'])
+    Route::delete('/albums/{album:url}', [AlbumController::class, 'destroy'])
         ->name('albums.destroy');
 
 });
+
+
 
 require __DIR__.'/auth.php';

@@ -29,7 +29,9 @@ class User extends Authenticatable
     public function photos(){
         return $this->hasMany(Photo::class);
     }
-    
+    public function albums(){
+        return $this->hasMany(Album::class);
+    }
     public function isAdmin(): bool
     {
         return $this->role === UserRole::ADMIN;

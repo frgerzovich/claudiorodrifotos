@@ -19,11 +19,17 @@ return new class extends Migration
             $table->decimal("price", 8, 2);
             $table->string("file_path");
             $table->string("preview_path");
+        
             $table->foreignId('user_id')
             ->constrained()
             ->cascadeOnDelete(); 
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreignId('album_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
         });
     }
 

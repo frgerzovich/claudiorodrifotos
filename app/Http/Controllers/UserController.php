@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    // 👥 listar usuarios (solo admin)
     public function index()
     {
         if (auth()->user()->role !== UserRole::ADMIN) {
@@ -30,7 +29,6 @@ class UserController extends Controller
         return view('users.show', compact('user'));
     }
 
-    // ➕ crear usuario
     public function create()
     {
         if (auth()->user()->role !== UserRole::ADMIN) {
@@ -40,7 +38,6 @@ class UserController extends Controller
         return view('users.create');
     }
 
-    // 💾 guardar usuario
     public function store(Request $request)
     {
         if (auth()->user()->role !== UserRole::ADMIN) {
@@ -61,7 +58,6 @@ class UserController extends Controller
         return redirect()->route('users.index');
     }
 
-    // ✏️ editar
     public function edit(User $user)
     {
         if (auth()->user()->role !== UserRole::ADMIN) {
@@ -71,7 +67,6 @@ class UserController extends Controller
         return view('users.edit', compact('user'));
     }
 
-    // 🔄 update
     public function update(Request $request, User $user)
     {
         if (auth()->user()->role !== UserRole::ADMIN) {
@@ -89,7 +84,6 @@ class UserController extends Controller
         return redirect()->route('users.index');
     }
 
-    // ❌ delete
     public function destroy(User $user)
     {
         if (auth()->user()->role !== UserRole::ADMIN) {

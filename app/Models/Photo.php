@@ -22,4 +22,8 @@ class Photo extends Model
     public function orderItems(){
         return $this->hasMany(OrderItem::class);
     }
+
+    public function album(){
+        return $this->belongsTo(Album::class);
+    }
 }

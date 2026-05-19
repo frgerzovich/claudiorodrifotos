@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AlbumController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,7 +34,7 @@ Route::post('/checkout', [OrderController::class, 'store'])->name('orders.store'
 //usuarios
 Route::middleware(['auth'])->group(function () {
 
-    // 👥 usuarios (admin-only en controller)
+    //  usuarios 
     Route::get('/users', [UserController::class, 'index'])
         ->name('users.index');
 
@@ -54,6 +55,37 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
+});
+
+//albumes
+Route::get('/albums', [AlbumController::class, 'index'])
+    ->name('albums.index');
+
+Route::get('/albums/{album:url}', [AlbumController::class, 'show'])
+    ->name('albums.show');
+
+Route::post('/albums/{album:url}/access', [AlbumController::class, 'access'])
+    ->name('albums.access');
+    
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard/albums/create', [AlbumController::class, 'create'])
+        ->name('albums.create');
+
+
+    Route::post('/dashboard/albums', [AlbumController::class, 'store'])
+        ->name('albums.store');
+
+    Route::get('/dashboard/albums/{album:url}/edit', [AlbumController::class, 'edit'])
+        ->name('albums.edit');
+
+
+    Route::put('/dashboard/albums/{album:url}', [AlbumController::class, 'update'])
+        ->name('albums.update');
+
+   
+    Route::delete('/dashboard/albums/{album:url}', [AlbumController::class, 'destroy'])
+        ->name('albums.destroy');
+
 });
 
 require __DIR__.'/auth.php';

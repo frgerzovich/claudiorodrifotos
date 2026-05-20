@@ -67,7 +67,7 @@ class PhotoController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'image' => 'required|image|max:5120',
+            'image' => 'required|image|max:20480',
             'album_id' => 'nullable|exists:albums,id',
         ]);
 

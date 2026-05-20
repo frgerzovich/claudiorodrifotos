@@ -116,5 +116,7 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard');
 });
 
-
+Route::get('/phpinfo', function () {
+    phpinfo();
+});
 require __DIR__.'/auth.php';

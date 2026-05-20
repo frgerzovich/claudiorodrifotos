@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -12,10 +14,7 @@ class DashboardController extends Controller
 
         $photoFilter = request('photos');
         $orderFilter = request('orders');
-
-        // -------------------
-        // PHOTOS FILTER
-        // -------------------
+        //filtro de fotos
         $photosQuery = $user->photos()->latest();
 
         if ($photoFilter === 'album') {
@@ -28,9 +27,7 @@ class DashboardController extends Controller
 
         $photos = $photosQuery->get();
 
-        // -------------------
-        // ORDERS FILTER
-        // -------------------
+        //filtro pedidos
         $ordersQuery = Order::whereHas('items.photo', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         })->with(['items.photo'])->latest();
@@ -38,9 +35,20 @@ class DashboardController extends Controller
         if ($orderFilter) {
             $ordersQuery->where('status', $orderFilter);
         }
-
         $orders = $ordersQuery->get();
+        //estadisticas
+        $photoIds = $user->photos()->pluck('id');
 
-        return view('dashboard', compact('photos', 'orders', 'photoFilter', 'orderFilter'));
+        $totalRevenue = OrderItem::whereIn('photo_id', $photoIds)
+            ->sum(DB::raw('quantity * unit_price'));
+
+
+            return view('dashboard.index', compact(
+                'photos',
+                'orders',
+                'photoFilter',
+                'orderFilter',
+                'totalRevenue'
+            ));
     }
 }

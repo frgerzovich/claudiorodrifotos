@@ -13,27 +13,38 @@ class AlbumController extends Controller
     // listado público de álbumes
     public function index()
     {
-        $albums = Album::with('user')
-            ->latest()
-            ->get();
+       $albums = Album::with([
+            'user',
+            'photos'
+        ])->latest()->get();
 
         return view('albums.index', compact('albums'));
     }
 
     // ver álbum
     public function show(Album $album)
-    {
-        if (
-            $album->is_private &&
-            !session()->has('album_access_' . $album->id)
-        ) {
-            return view('albums.password', compact('album'));
-        }
+{
+    $user = auth()->user();
 
-        $album->load('photos');
+    $canAccessPrivateAlbum =
+        $user &&
+        (
+            $user->id === $album->user_id ||
+            $user->role === UserRole::ADMIN
+        );
 
-        return view('albums.show', compact('album'));
+    if (
+        $album->is_private &&
+        !$canAccessPrivateAlbum &&
+        !session()->has('album_access_' . $album->id)
+    ) {
+        return view('albums.password', compact('album'));
     }
+
+    $album->load('photos');
+
+    return view('albums.show', compact('album'));
+}
 //validar contraseña para álbum privado
     public function access(Request $request, Album $album)
     {
@@ -65,7 +76,7 @@ class AlbumController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:255|unique:albums,title',
             'description' => 'nullable|string',
             'password' => 'nullable|string|min:4',
             'cover_image' => 'nullable|string',
@@ -129,15 +140,47 @@ class AlbumController extends Controller
     }
 
     // helper ownership
-    private function checkOwnership(Album $album)
-{
-    $user = auth()->user();
+    private function checkOwnership(Album $album){
+        $user = auth()->user();
 
-    if (
-        $album->user_id !== $user->id &&
-        $user->role !== UserRole::ADMIN
-    ) {
-        abort(403);
+        if (
+            $album->user_id !== $user->id &&
+            $user->role !== UserRole::ADMIN
+        ) {
+            abort(403);
+        }
     }
-}
+    public function ajaxStore(Request $request){
+            $validated = $request->validate([
+                'title' => 'required|string|max:255|unique:albums,title',
+                'description' => 'nullable|string',
+                'password' => 'nullable|string|min:4',
+            ], 
+            [
+                'title.required' => 'El título es obligatorio.',
+                'title.unique' => 'Ya existe un álbum con ese título.',
+                'password.min' => 'La contraseña debe tener al menos 4 caracteres.',
+            ]);
+
+            $album = Album::create([
+                'user_id' => auth()->id(),
+
+                'title' => $validated['title'],
+
+                'url' => Str::slug($validated['title']),
+
+                'description' => $validated['description'] ?? null,
+
+                'password' => !empty($validated['password'])
+                    ? Hash::make($validated['password'])
+                    : null,
+
+                'is_private' => !empty($validated['password']),
+            ]);
+
+            return response()->json([
+                'id' => $album->id,
+                'title' => $album->title,
+            ]);
+        }
 }

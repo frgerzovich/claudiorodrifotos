@@ -42,47 +42,116 @@ class PhotoController extends Controller
     }
 
     public function show(Photo $photo)
-    {
-        if (
-            $photo->album &&
-            $photo->album->is_private &&
-            !session()->has('album_access_' . $photo->album->id)
-        ) {
-            abort(403);
-        }
-
-        return view('photos.show', compact('photo'));
+{
+    if (
+        $photo->album &&
+        $photo->album->is_private &&
+        !(
+            auth()->id() === $photo->album->user_id ||
+            auth()->user()?->role === \App\Enums\UserRole::ADMIN ||
+            session()->has('album_access_' . $photo->album->id)
+        )
+    ) {
+        abort(403);
     }
+
+    return view('photos.show', compact('photo'));
+}
 
     public function create()
     {
         $albums = auth()->user()->albums;
+         $selectedAlbum = request('album');
 
-        return view('photos.create', compact('albums'));
+        return view('photos.create', compact('albums', 'selectedAlbum'));
     }
 
     public function store(Request $request)
+{
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'required|numeric|min:0',
+
+        'image' => 'required|image|max:20480',
+
+        'album_id' => 'nullable|exists:albums,id',
+    ]);
+
+    $path = $request->file('image')->store('photos', 'public');
+
+    $photo = auth()->user()->photos()->create([
+        'title' => $validated['title'],
+        'description' => $validated['description'] ?? null,
+        'price' => $validated['price'],
+        'file_path' => $path,
+        'preview_path' => $path,
+        'album_id' => $validated['album_id'] ?? null,
+    ]);
+
+    if (!empty($validated['album_id'])) {
+        $album = \App\Models\Album::find($validated['album_id']);
+        return redirect()->route('albums.show', $album);
+    }
+
+    return redirect()->route('photos.show', $photo);
+}
+
+    public function bulkCreate()
+    {
+        $albums = auth()->user()->albums;
+        $selectedAlbum = request('album');
+
+        return view('photos.bulk-create', compact('albums', 'selectedAlbum'));
+    }
+
+    public function bulkStore(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'image' => 'required|image|max:20480',
+
             'album_id' => 'nullable|exists:albums,id',
+
+            'images' => 'required|array|min:1',
+
+            'images.*' => 'image|max:20480',
         ]);
 
-        $path = $request->file('image')->store('photos', 'public');
+        foreach ($request->file('images') as $image) {
 
-        $photo = auth()->user()->photos()->create([
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'price' => $validated['price'],
-            'file_path' => $path,
-            'preview_path' => $path,
-            'album_id' => $validated['album_id'] ?? null,
-        ]);
+            $path = $image->store(
+                'photos',
+                'public'
+            );
 
-        return redirect()->route('photos.show', $photo);
+            auth()->user()->photos()->create([
+
+                'title' => pathinfo(
+                    $image->getClientOriginalName(),
+                    PATHINFO_FILENAME
+                ),
+
+                'description' => null,
+
+                'price' => $validated['price'],
+
+                'file_path' => $path,
+
+                'preview_path' => $path,
+
+                'album_id' =>
+                    $validated['album_id'] ?? null,
+            ]);
+        }
+
+        if (!empty($validated['album_id'])) {
+
+            $album = \App\Models\Album::find($validated['album_id']);
+
+            return redirect()->route('albums.show', $album);
+        }
+
+        return redirect()->route('photos.index');
     }
 
     public function edit(Photo $photo)

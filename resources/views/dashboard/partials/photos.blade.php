@@ -6,15 +6,28 @@
 
         <div class="col-md-3">
 
-            <div class="card">
+            <div class="card h-100">
 
-                <img
-                    src="{{ asset('storage/' . $photo->file_path) }}"
-                    class="card-img-top"
-                >
+                <a href="{{ route('photos.show', $photo) }}">
+
+                    <img
+                        src="{{ asset('storage/' . $photo->file_path) }}"
+                        class="card-img-top"
+                        alt="{{ $photo->title }}"
+                    >
+
+                </a>
 
                 <div class="card-body">
-                    <h6>{{ $photo->title }}</h6>
+
+                    <h6 class="mb-2">
+                        {{ $photo->title }}
+                    </h6>
+
+                    <small class="text-muted">
+                        ${{ number_format($photo->price, 2) }}
+                    </small>
+
                 </div>
 
             </div>

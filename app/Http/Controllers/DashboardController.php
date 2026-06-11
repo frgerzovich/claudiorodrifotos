@@ -36,6 +36,11 @@ class DashboardController extends Controller
             $ordersQuery->where('status', $orderFilter);
         }
         $orders = $ordersQuery->get();
+        //albumes
+        $albums = $user->albums()
+            ->withCount('photos')
+            ->latest()
+            ->get();
         //estadisticas
         $photoIds = $user->photos()->pluck('id');
 
@@ -45,6 +50,7 @@ class DashboardController extends Controller
 
             return view('dashboard.index', compact(
                 'photos',
+                'albums',
                 'orders',
                 'photoFilter',
                 'orderFilter',

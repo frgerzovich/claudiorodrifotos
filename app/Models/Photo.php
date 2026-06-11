@@ -12,7 +12,8 @@ class Photo extends Model
         'price',
         'file_path',
         'preview_path',
-        'user_id'
+        'user_id',
+        'album_id'
     ];
 
     public function user(){
@@ -26,4 +27,5 @@ class Photo extends Model
     public function album(){
         return $this->belongsTo(Album::class);
     }
+    
 }

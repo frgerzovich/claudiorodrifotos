@@ -32,8 +32,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/photos/create', [PhotoController::class, 'create'])
         ->name('photos.create');
 
+    Route::get('/photos/bulk-create', [PhotoController::class, 'bulkCreate'])
+        ->name('photos.bulk-create');
+
     Route::post('/photos', [PhotoController::class, 'store'])
         ->name('photos.store');
+
+    Route::post('/photos/bulk-store', [PhotoController::class, 'bulkStore'])
+        ->name('photos.bulk-store');
 
     Route::get('/photos/{photo}/edit', [PhotoController::class, 'edit'])
         ->name('photos.edit');
@@ -84,7 +90,7 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/albums', [AlbumController::class, 'index'])
     ->name('albums.index');
 
-Route::get('/albums/{album:url}', [AlbumController::class, 'show'])
+Route::get('/albums/{album}', [AlbumController::class, 'show'])
     ->name('albums.show');
 
 Route::post('/albums/{album:url}/access', [AlbumController::class, 'access'])
@@ -108,8 +114,18 @@ Route::middleware('auth')->group(function () {
    
     Route::delete('/albums/{album:url}', [AlbumController::class, 'destroy'])
         ->name('albums.destroy');
+    Route::post('/albums/ajax', [AlbumController::class, 'ajaxStore'])
+        ->middleware('auth')
+        ->name('albums.ajax.store');
 
 });
+
+Route::get('/albums', [AlbumController::class, 'index'])
+    ->name('albums.index');
+Route::get('/albums/{album:url}', [AlbumController::class, 'show'])
+    ->name('albums.show');
+Route::post('/albums/{album}/access', [AlbumController::class, 'access'])->name('albums.access');
+
 //dashboard
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])

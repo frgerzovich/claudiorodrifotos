@@ -28,8 +28,27 @@ class Album extends Model
     }
 
     // helpers
+    public function getRouteKeyName()
+    {
+        return 'url';
+    }
     public function isPrivate(): bool
     {
         return $this->is_private;
     }
+    public function getCoverUrlAttribute()
+    {
+        if ($this->cover_image) {
+            return asset('storage/' . $this->cover_image);
+        }
+
+        $firstPhoto = $this->photos->first();
+
+        if ($firstPhoto) {
+            return asset('storage/' . $firstPhoto->preview_path);
+        }
+
+        return null;
+    }
+    
 }

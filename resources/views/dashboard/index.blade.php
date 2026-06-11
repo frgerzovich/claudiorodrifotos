@@ -10,19 +10,23 @@
 
         <h1>Mi panel</h1>
 
-        <a
-            href="{{ route('photos.create') }}"
-            class="btn btn-dark"
-        >
-            Subir foto
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('photos.create') }}" class="btn btn-dark">
+                Subir una foto
+            </a>
+
+            <a href="{{ route('photos.bulk-create') }}" class="btn btn-dark">
+                Subir fotos
+            </a>
+        </div>
 
     </div>
-<div class="container py-4">
 
     @include('dashboard.partials.stats')
 
     @include('dashboard.partials.photos')
+
+    @include('dashboard.partials.albums')
 
     @include('dashboard.partials.orders')
 

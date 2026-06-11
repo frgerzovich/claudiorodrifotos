@@ -73,62 +73,90 @@ class AlbumController extends Controller
     }
 
     //guardar álbum
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255|unique:albums,title',
-            'description' => 'nullable|string',
-            'password' => 'nullable|string|min:4',
-            'cover_image' => 'nullable|string',
-        ]);
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'title' => 'required|string|max:255|unique:albums,title',
+        'description' => 'nullable|string',
+        'password' => 'nullable|string|min:4',
+        'cover_image' => 'nullable|image|max:20480',
+    ]);
 
-        $album = Album::create([
-            'user_id' => auth()->id(),
+    $coverPath = null;
 
-            'title' => $validated['title'],
-
-            'url' => Str::slug($validated['title']),
-
-            'description' => $validated['description'] ?? null,
-
-            'password' => !empty($validated['password'])
-                ? Hash::make($validated['password'])
-                : null,
-
-            'is_private' => !empty($validated['password']),
-
-            'cover_image' => $validated['cover_image'] ?? null,
-        ]);
-
-        return redirect()->route('albums.show', $album);
+    if ($request->hasFile('cover_image')) {
+        $coverPath = $request->file('cover_image')->store('covers', 'public');
     }
+
+    $album = Album::create([
+        'user_id' => auth()->id(),
+        'title' => $validated['title'],
+        'url' => Str::slug($validated['title']),
+        'description' => $validated['description'] ?? null,
+        'password' => !empty($validated['password'])
+            ? Hash::make($validated['password'])
+            : null,
+        'is_private' => !empty($validated['password']),
+        'cover_image' => $coverPath,
+    ]);
+
+    return redirect()->route('albums.show', $album);
+}
 
     // editar álbum
-    public function edit(Album $album)
-    {
-        $this->checkOwnership($album);
+   public function edit(Album $album)
+{
+    $this->checkOwnership($album);
 
-        return view('albums.edit', compact('album'));
-    }
+    $album->load('photos');
+
+    return view('albums.edit', compact('album'));
+}
 
     //update álbum
     public function update(Request $request, Album $album)
-    {
-        $this->checkOwnership($album);
+{
+    $this->checkOwnership($album);
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'cover_photo_id' => 'nullable|exists:photos,id',
+        'cover_image' => 'nullable|image|max:20480',
+    ]);
 
-        $album->update([
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-        ]);
+    $album->title = $validated['title'];
+    $album->description = $validated['description'] ?? null;
 
-        return redirect()->route('albums.show', $album);
+    $album->is_private = $request->has('is_private');
+
+    if ($request->filled('password')) {
+        $album->password = Hash::make($request->password);
     }
 
+    if (!$request->has('is_private')) {
+        $album->password = null;
+    }
+
+    // subir nueva imagen de portada
+    if ($request->hasFile('cover_image')) {
+        $path = $request->file('cover_image')->store('covers', 'public');
+        $album->cover_image = $path;
+    }
+
+    // seleccionar foto existente como portada
+    if ($request->filled('cover_photo_id')) {
+        $photo = $album->photos()->find($request->cover_photo_id);
+
+        if ($photo) {
+            $album->cover_image = $photo->preview_path;
+        }
+    }
+
+    $album->save();
+
+    return redirect()->route('albums.show', $album);
+}
     //borrar álbum
     public function destroy(Album $album)
     {

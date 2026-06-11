@@ -87,43 +87,40 @@ Route::middleware(['auth'])->group(function () {
 });
 
 //albumes
-Route::get('/albums', [AlbumController::class, 'index'])
-    ->name('albums.index');
-
-Route::get('/albums/{album}', [AlbumController::class, 'show'])
-    ->name('albums.show');
-
-Route::post('/albums/{album:url}/access', [AlbumController::class, 'access'])
-    ->name('albums.access');
 
 Route::middleware('auth')->group(function () {
     Route::get('/albums/create', [AlbumController::class, 'create'])
-        ->name('albums.create');
-
-
+    ->name('albums.create');
+    
+    
     Route::post('/albums', [AlbumController::class, 'store'])
-        ->name('albums.store');
-
+    ->name('albums.store');
+    
     Route::get('/albums/{album:url}/edit', [AlbumController::class, 'edit'])
-        ->name('albums.edit');
-
-
+    ->name('albums.edit');
+    
+    
     Route::put('/albums/{album:url}', [AlbumController::class, 'update'])
-        ->name('albums.update');
-
-   
+    ->name('albums.update');
+    
+    
     Route::delete('/albums/{album:url}', [AlbumController::class, 'destroy'])
-        ->name('albums.destroy');
+    ->name('albums.destroy');
     Route::post('/albums/ajax', [AlbumController::class, 'ajaxStore'])
-        ->middleware('auth')
-        ->name('albums.ajax.store');
+    ->middleware('auth')
+    ->name('albums.ajax.store');
+    
+    });
+    
+    Route::get('/albums', [AlbumController::class, 'index'])
+        ->name('albums.index');
+    
+    Route::get('/albums/{album}', [AlbumController::class, 'show'])
+        ->name('albums.show');
+    
+    Route::post('/albums/{album:url}/access', [AlbumController::class, 'access'])
+        ->name('albums.access');
 
-});
-
-Route::get('/albums', [AlbumController::class, 'index'])
-    ->name('albums.index');
-Route::get('/albums/{album:url}', [AlbumController::class, 'show'])
-    ->name('albums.show');
 Route::post('/albums/{album}/access', [AlbumController::class, 'access'])->name('albums.access');
 
 //dashboard

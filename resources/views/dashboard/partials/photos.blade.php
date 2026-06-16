@@ -11,7 +11,7 @@
 
             <div class="card h-100 shadow-sm border-0">
 
-                <a href="{{ route('photos.show', $photo) }}">
+                <a href="{{ route('dashboard.photos.show', $photo) }}">
 
                     <img
                         src="{{ asset('storage/' . $photo->file_path) }}"

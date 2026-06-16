@@ -11,7 +11,7 @@
 
             <div class="card h-100 shadow-sm border-0 overflow-hidden">
 
-                <a href="{{ route('albums.show', $album) }}">
+                <a href="{{ route('dashboard.albums.show', $album) }}">
 
                     @if($album->cover_url)
 

@@ -92,22 +92,17 @@ Route::middleware(['auth'])->group(function () {
 
 //albumes
 
-Route::middleware('auth')->group(function () {
-    Route::get('/albums/create', [AlbumController::class, 'create'])
-    ->name('albums.create');
-    
-    
+    Route::middleware('auth')->group(function () {
+        Route::get('/albums/create', [AlbumController::class, 'create'])
+        ->name('albums.create');  
     Route::post('/albums', [AlbumController::class, 'store'])
-    ->name('albums.store');
-    
+        ->name('albums.store');    
     Route::get('/albums/{album:url}/edit', [AlbumController::class, 'edit'])
     ->name('albums.edit');
-    
-    
+    Route::get('/albums/{album:url}', [AlbumController::class, 'show'])
+    ->name('albums.show');
     Route::put('/albums/{album:url}', [AlbumController::class, 'update'])
-    ->name('albums.update');
-    
-    
+    ->name('albums.update');   
     Route::delete('/albums/{album:url}', [AlbumController::class, 'destroy'])
     ->name('albums.destroy');
     Route::post('/albums/ajax', [AlbumController::class, 'ajaxStore'])
@@ -117,11 +112,12 @@ Route::middleware('auth')->group(function () {
     });
     
     Route::get('/albums', [AlbumController::class, 'index'])
-        ->name('albums.index');
+    ->name('albums.index');
     
     Route::get('/albums/{album}', [AlbumController::class, 'show'])
-        ->name('albums.show');
+    ->name('albums.show');
     
+      
     Route::post('/albums/{album:url}/access', [AlbumController::class, 'access'])
         ->name('albums.access');
 
@@ -133,10 +129,15 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard');
     Route::get('/dashboard/photos', [DashboardController::class, 'photos'])
         ->name('dashboard.photos');
+    Route::get('/dashboard/photos/{photo}', [PhotoController::class, 'dashboardShow'])
+        ->name('dashboard.photos.show');
     Route::get('/dashboard/albums', [DashboardController::class, 'albums'])
         ->name('dashboard.albums');
+    Route::get('dashboard/albums/{album}', [AlbumController::class, 'dashboardShow'])
+        ->name('dashboard.albums.show');
     Route::get('/dashboard/orders', [DashboardController::class, 'orders'])
         ->name('dashboard.orders');
+
     
 });
 

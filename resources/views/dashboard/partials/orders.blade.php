@@ -1,27 +1,73 @@
-<h2 class="mb-3">Mis pedidos</h2>
+<h1 class="h2 fw-bold mb-4">
+    Pedidos
+</h1>
 
-@foreach($orders as $order)
 
-    <div class="border rounded p-3 mb-3">
+<div class="mb-5">
 
-        <p>Pedido #{{ $order->id }}</p>
-        <p>Estado: {{ $order->status }}</p>
-        <p>Total: {{ $order->total }}</p>
+    @foreach($orders as $order)
 
-        <ul>
-            @foreach($order->items as $item)
+        <div class="card shadow-sm border-0 mb-3">
 
-                @if($item->photo && $item->photo->user_id === auth()->id())
+            <div class="card-body">
 
-                    <li>
-                        {{ $item->photo->title }} - x{{ $item->quantity }}
-                    </li>
+                <div class="d-flex justify-content-between align-items-start mb-3">
 
-                @endif
+                    <h5 class="fw-bold mb-0">
+                        Pedido #{{ $order->id }}
+                    </h5>
 
-            @endforeach
-        </ul>
+                    <span class="badge bg-secondary">
+                        {{ $order->status }}
+                    </span>
 
-    </div>
+                </div>
 
-@endforeach
+
+                <p class="mb-3">
+                    <strong>Total:</strong>
+                    ${{ number_format($order->total, 0, ',', '.') }}
+                </p>
+
+
+                <p class="text-muted mb-2">
+                    Fotos:
+                </p>
+
+
+                <ul class="mb-0">
+
+                    @foreach($order->items as $item)
+
+                        @if($item->photo && $item->photo->user_id === auth()->id())
+
+                            <li>
+                                {{ $item->photo->title }}
+                                - x{{ $item->quantity }}
+                            </li>
+
+                        @endif
+
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    @endforeach
+
+</div>
+
+
+<div class="text-end">
+
+    <a
+        href="{{ route('dashboard.orders') }}"
+        class="btn btn-outline-dark btn-sm"
+    >
+        Ver todos los pedidos
+    </a>
+
+</div>

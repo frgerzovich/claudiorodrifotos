@@ -1,117 +1,206 @@
 @extends('layouts.app')
 
 @section('title', 'Editar álbum')
+
 @section('content')
 
 <div class="container py-4">
-
-    <h1>Editar álbum</h1>
-
-    <form method="POST" action="{{ route('albums.update', $album) }}" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
-
-        {{-- Título --}}
-        <div class="mb-3">
-            <label>Título</label>
-            <input type="text" name="title" value="{{ $album->title }}" class="form-control">
-        </div>
-
-        {{-- Descripción --}}
-        <div class="mb-3">
-            <label>Descripción</label>
-            <textarea name="description" class="form-control">{{ $album->description }}</textarea>
-        </div>
-
-        <hr>
-        <div class="form-check mb-3">
-
-    <input
-        class="form-check-input"
-        type="checkbox"
-        id="isPrivate"
-        name="is_private"
-        @checked($album->is_private)
+<a
+        href="{{ route('dashboard') }}"
+        class="btn btn-outline-dark btn-sm mb-4"
     >
+        ← Volver
+    </a>
+    <h1 class="h2 fw-bold mb-4">
+        Editar álbum
+    </h1>
 
-    <label class="form-check-label" for="isPrivate">
-        Álbum privado
-    </label>
 
-</div>
+    <div class="card shadow-sm border-0">
 
-<div id="passwordContainer" class="mb-3 {{ $album->is_private ? '' : 'd-none' }}">
+        <div class="card-body p-4">
 
-    <label class="form-label">Contraseña</label>
 
-    <input
-        type="password"
-        name="password"
-        class="form-control"
-        value="{{ $album->password }}"
-    >
+            <form
+                method="POST"
+                action="{{ route('albums.update', $album) }}"
+                enctype="multipart/form-data"
+            >
 
-</div>
-<hr>
+                @csrf
+                @method('PUT')
 
-        <h4>Cover del álbum</h4>
 
-        {{-- 1. Upload manual --}}
-        <div class="mb-3">
-            <label>Subir nueva portada</label>
-            <input type="file" name="cover_image" class="form-control">
-        </div>
+                <div class="mb-3">
 
-        <hr>
+                    <label class="form-label">
+                        Título
+                    </label>
 
-        {{-- 2. Elegir desde fotos --}}
-        <div class="mb-3">
+                    <input
+                        type="text"
+                        name="title"
+                        value="{{ $album->title }}"
+                        class="form-control"
+                    >
 
-            <label class="mb-2">O elegir desde fotos del álbum</label>
+                </div>
 
-            <div class="row g-2">
 
-                @foreach($album->photos as $photo)
+                <div class="mb-4">
 
-                    <div class="col-3">
+                    <label class="form-label">
+                        Descripción
+                    </label>
 
-                        <label class="d-block border p-2">
+                    <textarea
+                        name="description"
+                        class="form-control"
+                        rows="4"
+                    >{{ $album->description }}</textarea>
 
-                            <input
-                                type="radio"
-                                name="cover_photo_id"
-                                value="{{ $photo->id }}"
-                            >
+                </div>
 
-                            <img
-                                src="{{ asset('storage/' . $photo->preview_path) }}"
-                                class="img-fluid"
-                            >
 
-                        </label>
+
+                <div class="form-check mb-3">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="isPrivate"
+                        name="is_private"
+                        @checked($album->is_private)
+                    >
+
+                    <label
+                        class="form-check-label"
+                        for="isPrivate"
+                    >
+                        Álbum privado
+                    </label>
+
+                </div>
+
+
+
+                <div
+                    id="passwordContainer"
+                    class="mb-4 {{ $album->is_private ? '' : 'd-none' }}"
+                >
+
+                    <label class="form-label">
+                        Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        value="{{ $album->password }}"
+                    >
+
+                </div>
+
+
+
+                <h5 class="fw-bold mb-3">
+                    Portada del álbum
+                </h5>
+
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Subir nueva portada
+                    </label>
+
+                    <input
+                        type="file"
+                        name="cover_image"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+
+                <div class="mb-4">
+
+                    <label class="form-label mb-3">
+                        Elegir portada desde fotos del álbum
+                    </label>
+
+
+                    <div class="row g-3">
+
+                        @foreach($album->photos as $photo)
+
+                            <div class="col-md-3">
+
+                                <label
+                                    class="card h-100 shadow-sm border-0 p-2"
+                                >
+
+                                    <input
+                                        type="radio"
+                                        name="cover_photo_id"
+                                        value="{{ $photo->id }}"
+                                        class="form-check-input mb-2"
+                                        @checked($album->cover_photo_id === $photo->id)
+                                    >
+
+
+                                    <img
+                                        src="{{ asset('storage/' . $photo->preview_path) }}"
+                                        class="img-fluid rounded"
+                                        alt="{{ $photo->title }}"
+                                    >
+
+                                </label>
+
+                            </div>
+
+                        @endforeach
 
                     </div>
 
-                @endforeach
+                </div>
 
-            </div>
+
+
+                <button
+                    class="btn btn-dark"
+                >
+                    Guardar cambios
+                </button>
+
+
+            </form>
+
 
         </div>
 
-        <button class="btn btn-dark">
-            Guardar cambios
-        </button>
-
-    </form>
+    </div>
 
 </div>
 
+
 <script>
+
 const isPrivate = document.getElementById('isPrivate');
 const passwordContainer = document.getElementById('passwordContainer');
 
+
 isPrivate.addEventListener('change', () => {
-    passwordContainer.classList.toggle('d-none', !isPrivate.checked);
+
+    passwordContainer.classList.toggle(
+        'd-none',
+        !isPrivate.checked
+    );
+
 });
+
 </script>
+
 @endsection

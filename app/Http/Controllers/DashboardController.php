@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Photo;
+use App\Models\Album;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -14,8 +16,13 @@ class DashboardController extends Controller
 
         $photoFilter = request('photos');
         $orderFilter = request('orders');
-        //filtro de fotos
-        $photosQuery = $user->photos()->latest();
+
+
+        // FOTOS
+        $photosQuery = $user->isAdmin()
+            ? Photo::latest()
+            : $user->photos()->latest();
+
 
         if ($photoFilter === 'album') {
             $photosQuery->whereNotNull('album_id');
@@ -25,36 +32,177 @@ class DashboardController extends Controller
             $photosQuery->whereNull('album_id');
         }
 
-        $photos = $photosQuery->get();
+        $photos = $photosQuery
+            ->take(6)
+            ->get();
 
-        //filtro pedidos
-        $ordersQuery = Order::whereHas('items.photo', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })->with(['items.photo'])->latest();
+
+
+        // MOSTRAR ÁLBUMES
+        $albums = $user->isAdmin()
+            ? Album::withCount('photos')
+                ->latest()
+                ->take(4)
+                ->get()
+
+            : $user->albums()
+                ->withCount('photos')
+                ->latest()
+                ->take(4)
+                ->get();
+
+
+
+        // MOSTRAR PEDIDOS
+        if ($user->isAdmin()) {
+
+            $ordersQuery = Order::with('items.photo')
+                ->latest();
+
+        } else {
+
+            $ordersQuery = Order::whereHas(
+                'items.photo',
+                function ($q) use ($user) {
+
+                    $q->where('user_id', $user->id);
+
+                }
+            )
+            ->with('items.photo')
+            ->latest();
+
+        }
+
 
         if ($orderFilter) {
             $ordersQuery->where('status', $orderFilter);
         }
-        $orders = $ordersQuery->get();
-        //albumes
-        $albums = $user->albums()
-            ->withCount('photos')
-            ->latest()
+
+
+        $orders = $ordersQuery
+            ->take(5)
             ->get();
-        //estadisticas
-        $photoIds = $user->photos()->pluck('id');
+
+
+
+        // MOSTRAR ESTADÍSTICAS
+        if ($user->isAdmin()) {
+
+            $photoIds = Photo::pluck('id');
+
+        } else {
+
+            $photoIds = $user->photos()->pluck('id');
+
+        }
+
 
         $totalRevenue = OrderItem::whereIn('photo_id', $photoIds)
             ->sum(DB::raw('quantity * unit_price'));
 
+        $totalPhotos = $user->isAdmin()
+            ? Photo::count()
+            : $user->photos()->count();
 
-            return view('dashboard.index', compact(
+
+        $totalAlbums = $user->isAdmin()
+            ? Album::count()
+            : $user->albums()->count();
+
+
+        $totalOrders = $user->isAdmin()
+            ? Order::count()
+            : Order::whereHas('items.photo', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->count();
+
+        return view(
+            'dashboard.index',
+            compact(
                 'photos',
                 'albums',
                 'orders',
                 'photoFilter',
                 'orderFilter',
-                'totalRevenue'
-            ));
+                'totalRevenue',
+                'totalPhotos',
+                'totalAlbums',
+                'totalOrders'
+            )
+        );
+    }
+
+
+
+    public function photos()
+    {
+        $user = auth()->user();
+
+        $photos = $user->isAdmin()
+            ? Photo::latest()->get()
+            : $user->photos()->latest()->get();
+
+        return view(
+            'dashboard.photos.index',
+            compact('photos')
+        );
+    }
+
+
+
+    public function albums()
+    {
+        $user = auth()->user();
+
+        $albums = $user->isAdmin()
+            ? Album::withCount('photos')
+                ->latest()
+                ->get()
+
+            : $user->albums()
+                ->withCount('photos')
+                ->latest()
+                ->get();
+
+        return view(
+            'dashboard.albums.index',
+            compact('albums')
+        );
+    }
+
+
+
+    public function orders()
+    {
+        $user = auth()->user();
+
+        if ($user->isAdmin()) {
+
+            $orders = Order::with('items.photo')
+                ->latest()
+                ->get();
+
+        } else {
+
+            $orders = Order::whereHas(
+                'items.photo',
+                function ($query) use ($user) {
+
+                    $query->where('user_id', $user->id);
+
+                }
+            )
+            ->with('items.photo')
+            ->latest()
+            ->get();
+
+        }
+
+
+        return view(
+            'dashboard.orders.index',
+            compact('orders')
+        );
     }
 }

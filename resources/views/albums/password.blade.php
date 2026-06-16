@@ -8,19 +8,22 @@
 
     <div class="row justify-content-center">
 
-        <div class="col-md-6">
+        <div class="col-md-5">
 
-            <div class="card">
+            <div class="card shadow-sm border-0">
 
-                <div class="card-body">
+                <div class="card-body p-4">
 
-                    <h1 class="h4 mb-4">
+
+                    <h1 class="h3 fw-bold mb-3">
                         Álbum privado
                     </h1>
 
-                    <p>
-                        Este álbum está protegido por contraseña.
+
+                    <p class="text-muted mb-4">
+                        Este álbum está protegido con contraseña.
                     </p>
+
 
                     <form
                         action="{{ route('albums.access', $album) }}"
@@ -29,12 +32,27 @@
 
                         @csrf
 
-                        <input
-                            type="password"
-                            name="password"
-                            class="form-control mb-3"
-                            placeholder="Contraseña"
-                        >
+
+                        <div class="mb-3">
+
+                            <label
+                                class="form-label"
+                                for="password"
+                            >
+                                Contraseña
+                            </label>
+
+
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="Ingresá la contraseña"
+                            >
+
+                        </div>
+
 
                         @error('password')
 
@@ -44,11 +62,16 @@
 
                         @enderror
 
-                        <button class="btn btn-dark">
+
+                        <button
+                            class="btn btn-dark"
+                        >
                             Entrar
                         </button>
 
+
                     </form>
+
 
                 </div>
 

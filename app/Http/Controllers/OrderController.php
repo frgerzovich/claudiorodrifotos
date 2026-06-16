@@ -22,28 +22,34 @@ class OrderController extends Controller
             ->latest()
             ->get();
 
-        return view('orders.index', compact('orders'));
+        return view('dashboard.orders.index', compact('orders'));
     }
 
 
     public function show(Order $order)
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        if ($user->role !== 'admin') {
-            $hasAccess = $order->items()
-                ->where('photographer_id', $user->id)
-                ->exists();
+    if (!$user->isAdmin()) {
 
-            if (!$hasAccess) {
-                abort(403);
-            }
+        $hasAccess = $order->items()
+            ->whereHas('photo', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->exists();
+
+
+        if (!$hasAccess) {
+            abort(403);
         }
 
-        $order->load('items.photo');
-
-        return view('orders.show', compact('order'));
     }
+
+    $order->load('items.photo');
+
+
+    return view('dashboard.orders.show', compact('order'));
+}
 
     
     

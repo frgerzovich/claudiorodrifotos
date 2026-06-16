@@ -5,223 +5,187 @@
 @section('content')
 
 <div class="container py-4">
-
-    <h1 class="mb-4">
+<a
+        href="{{ route('dashboard') }}"
+        class="btn btn-outline-dark btn-sm mb-4"
+    >
+        ← Volver
+    </a>
+    <h1 class="h2 fw-bold mb-4">
         Subir foto
     </h1>
 
-    <form
-        action="{{ route('photos.store') }}"
-        method="POST"
-        enctype="multipart/form-data"
-    >
 
-        @csrf
+    <div class="card shadow-sm border-0">
 
-        <div class="mb-3">
+        <div class="card-body p-4">
 
-            <label class="form-label">Título</label>
 
-            <input
-                type="text"
-                name="title"
-                class="form-control"
-                value="{{ old('title') }}"
+            <form
+                action="{{ route('photos.store') }}"
+                method="POST"
+                enctype="multipart/form-data"
             >
 
-        </div>
-@if($errors->any())
+                @csrf
 
-    <div class="alert alert-danger">
 
-        <ul class="mb-0">
+                @if($errors->any())
 
-            @foreach($errors->all() as $error)
+                    <div class="alert alert-danger">
 
-                <li>{{ $error }}</li>
+                        <ul class="mb-0">
 
-            @endforeach
+                            @foreach($errors->all() as $error)
 
-        </ul>
+                                <li>{{ $error }}</li>
 
-    </div>
+                            @endforeach
 
-@endif
-        <div class="mb-3">
+                        </ul>
 
-            <label class="form-label">Descripción</label>
+                    </div>
 
-            <textarea
-                name="description"
-                class="form-control"
-            >{{ old('description') }}</textarea>
+                @endif
 
-        </div>
 
-        <div class="mb-3">
 
-            <label class="form-label">Precio</label>
+                <div class="mb-4">
 
-            <input
-                type="number"
-                step="0.01"
-                name="price"
-                class="form-control"
-                value="{{ old('price') }}"
-            >
+                    <label class="form-label">
+                        Título
+                    </label>
 
-        </div>
+                    <input
+                        type="text"
+                        name="title"
+                        class="form-control"
+                        value="{{ old('title') }}"
+                    >
 
-        <div class="mb-3">
+                </div>
 
-            <label class="form-label">Álbum</label>
 
-            <select name="album_id" id="albumSelect" class="form-select">
 
-    <option value="">
-        Sin álbum (pública)
-    </option>
+                <div class="mb-4">
 
-    @foreach($albums as $album)
+                    <label class="form-label">
+                        Descripción
+                    </label>
 
-        <option
-            value="{{ $album->id }}"
-            @selected($selectedAlbum == $album->id)
-        >
-            {{ $album->title }}
-        </option>
+                    <textarea
+                        name="description"
+                        class="form-control"
+                        rows="4"
+                    >{{ old('description') }}</textarea>
 
-    @endforeach
+                </div>
 
-</select>
-                    <button
-                    id="openAlbumModalBtn"
-                    type="button"
-                    class="btn btn-outline-dark"
-                    data-bs-toggle="modal"
-                    data-bs-target="#albumModal">
-                    + Nuevo álbum
-                </button>
 
-        </div>
-        <div
-    class="toast position-fixed bottom-0 end-0 m-3"
-    id="albumToast"
-    role="alert"
->
-    <div class="toast-body">
-        Álbum creado correctamente ✅
-    </div>
-</div>
 
-        <div class="mb-4">
+                <div class="mb-4">
 
-            <label class="form-label">Imagen</label>
+                    <label class="form-label">
+                        Precio
+                    </label>
 
-            <input
-                type="file"
-                name="image"
-                multiple
-                class="form-control"
-            >
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="price"
+                        class="form-control"
+                        value="{{ old('price') }}"
+                    >
 
-        </div>
+                </div>
 
-        <button class="btn btn-dark">
-            Subir foto
-        </button>
 
-    </form>
 
-</div>
-<!---modal-->
-<div class="modal fade" id="albumModal" tabindex="-1">
+                <div class="mb-4">
 
-    <div class="modal-dialog">
+                    <label class="form-label">
+                        Álbum
+                    </label>
 
-        <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    Nuevo álbum
-                </h5>
-            </div>
-            <div class="modal-body">
-                <div
-                    id="albumErrors"
-                    class="alert alert-danger d-none"
-                ></div>
+                    <div class="d-flex gap-2">
 
-                <input
-                    type="text"
-                    id="albumTitle"
-                    class="form-control mb-3"
-                    placeholder="Título"
-                >
+                        <select
+                            name="album_id"
+                            id="albumSelect"
+                            class="form-select"
+                        >
 
-                <textarea
-                    id="albumDescription"
-                    class="form-control"
-                    placeholder="Descripción"
-                ></textarea>
+                            <option value="">
+                                Sin álbum (pública)
+                            </option>
 
-                <div class="form-check mb-3">
-    
-        <input
-            class="form-check-input"
-            type="checkbox"
-            id="isPrivate"
-        >
-    
-        <label
-            class="form-check-label"
-            for="isPrivate"
-        >
-            Álbum privado
-        </label>
-    
-    </div>
-    <div
-        id="passwordContainer"
-        class="mb-3 d-none"
-    >
-    
-        <label class="form-label">
-            Contraseña
-        </label>
-    
-        <input
-            type="password"
-            id="albumPassword"
-            class="form-control"
-        >
-    
-        <div class="form-text">
-            Mínimo 4 caracteres
-        </div>
-            </div>
 
-</div>
+                            @foreach($albums as $album)
 
-            <div class="modal-footer">
+                                <option
+                                    value="{{ $album->id }}"
+                                    @selected($selectedAlbum == $album->id)
+                                >
+                                    {{ $album->title }}
+                                </option>
+
+                            @endforeach
+
+
+                        </select>
+
+
+                        <button
+                            id="openAlbumModalBtn"
+                            type="button"
+                            class="btn btn-outline-dark text-nowrap"
+                            data-bs-toggle="modal"
+                            data-bs-target="#albumModal"
+                        >
+                            + Nuevo álbum
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Imagen
+                    </label>
+
+                    <input
+                        type="file"
+                        name="image"
+                        class="form-control"
+                    >
+
+                    
+
+                </div>
+
+
 
                 <button
-                    type="button"
                     class="btn btn-dark"
-                    id="createAlbumBtn"
                 >
-                    Crear álbum
+                    Subir foto
                 </button>
 
-            </div>
+
+            </form>
+
 
         </div>
 
     </div>
 
 </div>
-
-
 <script>
 const isPrivate =
     document.getElementById('isPrivate');

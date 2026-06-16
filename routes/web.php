@@ -40,6 +40,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/photos/bulk-store', [PhotoController::class, 'bulkStore'])
         ->name('photos.bulk-store');
+    Route::delete('/photos/bulk-delete',[PhotoController::class, 'bulkDelete'])
+        ->name('photos.bulk-delete');
+    Route::post('/photos/bulk-move',[PhotoController::class, 'bulkMove'] )
+        ->name('photos.bulk-move');
 
     Route::get('/photos/{photo}/edit', [PhotoController::class, 'edit'])
         ->name('photos.edit');
@@ -127,6 +131,13 @@ Route::post('/albums/{album}/access', [AlbumController::class, 'access'])->name(
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+    Route::get('/dashboard/photos', [DashboardController::class, 'photos'])
+        ->name('dashboard.photos');
+    Route::get('/dashboard/albums', [DashboardController::class, 'albums'])
+        ->name('dashboard.albums');
+    Route::get('/dashboard/orders', [DashboardController::class, 'orders'])
+        ->name('dashboard.orders');
+    
 });
 
 Route::get('/phpinfo', function () {

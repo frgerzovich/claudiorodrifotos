@@ -1,4 +1,7 @@
-<h2 class="mb-3">Mis fotos</h2>
+<h1 class="h2 fw-bold mb-4">
+    Fotos
+</h1>
+
 
 <div class="row g-3 mb-5">
 
@@ -6,7 +9,7 @@
 
         <div class="col-md-3">
 
-            <div class="card h-100">
+            <div class="card h-100 shadow-sm border-0">
 
                 <a href="{{ route('photos.show', $photo) }}">
 
@@ -35,5 +38,17 @@
         </div>
 
     @endforeach
+
+</div>
+
+
+<div class="text-end mt-3">
+
+    <a
+        href="{{ route('dashboard.photos') }}"
+        class="btn btn-outline-dark btn-sm"
+    >
+        Ver todas las fotos
+    </a>
 
 </div>

@@ -5,98 +5,129 @@
 @section('content')
 
 <div class="container py-4">
-
-    <h1 class="mb-4">
+<a
+    href="{{ route('photos.show', $photo) }}"
+    class="btn btn-outline-dark btn-sm mb-4"
+>
+    ← Volver a la foto
+</a>
+    <h1 class="h2 fw-bold mb-4">
         Editar foto
     </h1>
 
-    <form
-        action="{{ route('photos.update', $photo) }}"
-        method="POST"
-    >
 
-        @csrf
-        @method('PUT')
+    <div class="card shadow-sm border-0">
 
-        <div class="mb-3">
+        <div class="card-body p-4">
 
-            <label class="form-label">
-                Título
-            </label>
 
-            <input
-                type="text"
-                name="title"
-                class="form-control"
-                value="{{ old('title', $photo->title) }}"
+            <form
+                action="{{ route('photos.update', $photo) }}"
+                method="POST"
             >
 
-        </div>
+                @csrf
+                @method('PUT')
 
-        <div class="mb-3">
 
-            <label class="form-label">
-                Descripción
-            </label>
+                <div class="mb-4">
 
-            <textarea
-                name="description"
-                class="form-control"
-            >{{ old('description', $photo->description) }}</textarea>
+                    <label class="form-label">
+                        Título
+                    </label>
 
-        </div>
-
-        <div class="mb-3">
-
-            <label class="form-label">
-                Precio
-            </label>
-
-            <input
-                type="number"
-                step="0.01"
-                name="price"
-                class="form-control"
-                value="{{ old('price', $photo->price) }}"
-            >
-
-        </div>
-
-        <div class="mb-4">
-
-            <label class="form-label">
-                Álbum
-            </label>
-
-            <select
-                name="album_id"
-                class="form-select"
-            >
-
-                <option value="">
-                    Sin álbum
-                </option>
-
-                @foreach($albums as $album)
-
-                    <option
-                        value="{{ $album->id }}"
-                        @selected($photo->album_id == $album->id)
+                    <input
+                        type="text"
+                        name="title"
+                        class="form-control"
+                        value="{{ old('title', $photo->title) }}"
                     >
-                        {{ $album->title }}
-                    </option>
 
-                @endforeach
+                </div>
 
-            </select>
+
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Descripción
+                    </label>
+
+                    <textarea
+                        name="description"
+                        class="form-control"
+                        rows="4"
+                    >{{ old('description', $photo->description) }}</textarea>
+
+                </div>
+
+
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Precio
+                    </label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="price"
+                        class="form-control"
+                        value="{{ old('price', $photo->price) }}"
+                    >
+
+                </div>
+
+
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Álbum
+                    </label>
+
+                    <select
+                        name="album_id"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Sin álbum
+                        </option>
+
+
+                        @foreach($albums as $album)
+
+                            <option
+                                value="{{ $album->id }}"
+                                @selected($photo->album_id == $album->id)
+                            >
+                                {{ $album->title }}
+                            </option>
+
+                        @endforeach
+
+
+                    </select>
+
+                </div>
+
+
+
+                <button
+                    class="btn btn-dark"
+                >
+                    Guardar cambios
+                </button>
+
+
+            </form>
+
 
         </div>
 
-        <button class="btn btn-dark">
-            Guardar cambios
-        </button>
-
-    </form>
+    </div>
 
 </div>
 

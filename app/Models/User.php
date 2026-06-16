@@ -47,12 +47,21 @@ class User extends Authenticatable
     public function canManagePhoto(Photo $photo){
         return $this->ownsPhoto($photo)|| $this->isAdmin();
     }
+    public function ownsAlbum(Album $album){
+        return $this->id === $album->user_id;
+    }
+    public function canManageAlbum(Album $album){
+        return $this->ownsAlbum($album)|| $this->isAdmin();
+    }
 
     public function ensureCanManagePhoto(Photo $photo): void{
         abort_unless($this->canManagePhoto($photo), 403);
     }
     public function ensureAdmin(): void{
         abort_unless($this->isAdmin(), 403);
+    }
+    public function ensureCanManageAlbum(Album $album): void{
+        abort_unless($this->canManageAlbum($album), 403);
     }
         /**
      * The attributes that should be hidden for serialization.

@@ -190,16 +190,47 @@ class PhotoController extends Controller
 
         return redirect()->route('photos.index');
     }
+    public function bulkMove(Request $request){
+        $request->validate([
+            'photos' => 'required|array',
+            'photos.*' => 'exists:photos,id',
+            'album_id' => 'nullable|exists:albums,id',
+        ]);
 
-    public function forceDestroy(Photo $photo)
-    {
-        auth()->user()->ensureAdmin();
 
-        Storage::disk('public')->delete($photo->file_path);
-        Storage::disk('public')->delete($photo->preview_path);
+        Photo::whereIn('id', $request->photos)
+            ->update([
+                'album_id' => $request->album_id
+            ]);
 
-        $photo->forceDelete();
 
-        return redirect()->route('photos.index');
+        return back()
+            ->with('success', 'Fotos movidas correctamente.');
+    }
+
+    public function bulkDelete(Request $request){
+        $request->validate([
+            'photos' => 'required|array|min:1',
+        ]);
+
+        $photos = Photo::whereIn(
+            'id',
+            $request->photos
+        )->get();
+
+        foreach ($photos as $photo) {
+
+            if (!auth()->user()->canManagePhoto($photo)) {
+                abort(403);
+            }
+
+        }
+
+        Photo::whereIn(
+            'id',
+            $request->photos
+        )->delete();
+
+        return back();
     }
 }

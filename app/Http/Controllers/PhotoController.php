@@ -151,7 +151,7 @@ class PhotoController extends Controller
             return redirect()->route('albums.show', $album);
         }
 
-        return redirect()->route('photos.index');
+        return redirect()->route('dashboard.photos');
     }
 
     public function edit(Photo $photo)

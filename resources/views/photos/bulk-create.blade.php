@@ -50,32 +50,45 @@
                 <div class="mb-4">
 
                     <label class="form-label">
-                        Álbum
-                    </label>
+    Álbum
+</label>
 
-                    <select
-                        name="album_id"
-                        class="form-select"
-                    >
+<div class="d-flex gap-2">
 
-                        <option value="">
-                            Sin álbum
-                        </option>
+    <select
+        name="album_id"
+        id="albumSelect"
+        class="form-select"
+    >
+
+        <option value="">
+            Sin álbum
+        </option>
+
+        @foreach($albums as $album)
+
+            <option
+                value="{{ $album->id }}"
+                @selected($selectedAlbum == $album->id)
+            >
+                {{ $album->title }}
+            </option>
+
+        @endforeach
+
+    </select>
 
 
-                        @foreach($albums as $album)
+    <button
+        type="button"
+        class="btn btn-outline-dark text-nowrap"
+        data-bs-toggle="modal"
+        data-bs-target="#albumModal"
+    >
+        + Nuevo álbum
+    </button>
 
-                            <option
-                                value="{{ $album->id }}"
-                                @selected($selectedAlbum == $album->id)
-                            >
-                                {{ $album->title }}
-                            </option>
-
-                        @endforeach
-
-
-                    </select>
+</div>
 
                 </div>
 
@@ -117,5 +130,5 @@
     </div>
 
 </div>
-
+@include('photos.partials.create-modal')
 @endsection

@@ -7,10 +7,10 @@
 <div class="container py-4">
 
 <a
-    href="{{ route('albums.show', $album) }}"
+    href="{{ route('dashboard') }}"
     class="btn btn-outline-dark btn-sm mb-4"
 >
-    ← Volver al álbum
+    ← Volver
 </a>
     <div class="mb-4">
 

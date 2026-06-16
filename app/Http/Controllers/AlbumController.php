@@ -164,7 +164,7 @@ class AlbumController extends Controller
 
         $album->delete();
 
-        return redirect()->route('albums.index');
+        return redirect()->route('dashboard.albums');
     }
 
     // helper ownership

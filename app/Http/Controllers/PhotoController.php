@@ -14,7 +14,17 @@ class PhotoController extends Controller
 
         $photographerId = request('photographer');
 
-        $query = Photo::whereNull('album_id');
+        $query = Photo::where(function ($q) {
+
+        $q->whereNull('album_id')
+          ->orWhereHas('album', function ($album) {
+
+              $album->where('is_private', false);
+
+          });
+
+    });
+
 
         if ($photographerId) {
             $query->where('user_id', $photographerId);
@@ -43,6 +53,8 @@ class PhotoController extends Controller
 
     public function show(Photo $photo)
 {
+
+    
     if (
         $photo->album &&
         $photo->album->is_private &&

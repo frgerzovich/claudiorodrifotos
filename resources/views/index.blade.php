@@ -1,3 +1,3 @@
 <script>
-window.location.href = "{{ route('dashboard') }}";
+window.location.href = "{{ route('photos.index') }}";
 </script>

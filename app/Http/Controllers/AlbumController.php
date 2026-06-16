@@ -32,7 +32,8 @@ class AlbumController extends Controller
             $user->id === $album->user_id ||
             $user->role === UserRole::ADMIN
         );
-
+    session()->forget('album_access_' . $album->id);
+    //borrar esta linea de arriba cuando termine de probar el acceso a álbum privado.
     if (
         $album->is_private &&
         !$canAccessPrivateAlbum &&

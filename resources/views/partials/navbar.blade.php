@@ -6,11 +6,31 @@
             class="navbar-brand fw-bold"
             href="{{ url('/') }}"
         >
-            Fotos
+            Claudiorodri Fotos
         </a>
 
 
         <div class="d-flex align-items-center gap-2">
+
+
+            {{-- Catálogo público --}}
+
+            <a
+                href="{{ route('photos.index') }}"
+                class="btn btn-outline-light btn-sm"
+            >
+                Fotos
+            </a>
+
+
+            <a
+                href="{{ route('albums.index') }}"
+                class="btn btn-outline-light btn-sm"
+            >
+                Álbumes
+            </a>
+
+
 
             @auth
 
@@ -27,6 +47,7 @@
                     action="{{ route('logout') }}"
                     class="m-0"
                 >
+
                     @csrf
 
                     <button
@@ -40,6 +61,7 @@
 
             @else
 
+
                 <a
                     href="{{ route('login') }}"
                     class="btn btn-outline-light btn-sm"
@@ -47,7 +69,9 @@
                     Entrar
                 </a>
 
+
             @endauth
+
 
         </div>
 

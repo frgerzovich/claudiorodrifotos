@@ -142,10 +142,14 @@ class DashboardController extends Controller
         $photos = $user->isAdmin()
             ? Photo::latest()->get()
             : $user->photos()->latest()->get();
+        
+        $albums = $user->isAdmin()
+            ? Album::latest()->get()
+            : $user->albums()->latest()->get();
 
         return view(
             'dashboard.photos.index',
-            compact('photos')
+            compact('photos', 'albums')
         );
     }
 

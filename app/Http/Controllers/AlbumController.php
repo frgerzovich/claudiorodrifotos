@@ -45,6 +45,19 @@ class AlbumController extends Controller
 
     return view('albums.show', compact('album'));
 }
+public function dashboardShow(Album $album)
+{
+    $user = auth()->user();
+
+    if (!$user->canManageAlbum($album)) {
+        abort(403);
+    }
+
+    $album->load('photos');
+
+    return view('dashboard.albums.show', compact('album'));
+}
+
 //validar contraseña para álbum privado
     public function access(Request $request, Album $album)
     {
@@ -155,7 +168,7 @@ class AlbumController extends Controller
 
     $album->save();
 
-    return redirect()->route('albums.show', $album);
+    return redirect()->route('dashboard.albums.show', $album);
 }
     //borrar álbum
     public function destroy(Album $album)

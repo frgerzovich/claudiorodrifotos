@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Álbumes')
+@section('title', 'Mis álbumes')
 
 @section('content')
 
@@ -76,7 +76,7 @@
                         <div class="mt-auto">
 
                             <a
-                                href="{{ route('albums.show', $album) }}"
+                                href="{{ route('dashboard.albums.show', $album) }}"
                                 class="btn btn-outline-dark btn-sm"
                             >
                                 Ver álbum

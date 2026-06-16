@@ -57,6 +57,16 @@ class PhotoController extends Controller
 
     return view('photos.show', compact('photo'));
 }
+public function dashboardShow(Photo $photo)
+{
+    $user = auth()->user();
+
+    if (!$user->canManagePhoto($photo)) {
+        abort(403);
+    }
+
+    return view('dashboard.photos.show', compact('photo'));
+}
 
     public function create()
     {
@@ -91,10 +101,10 @@ class PhotoController extends Controller
 
     if (!empty($validated['album_id'])) {
         $album = \App\Models\Album::find($validated['album_id']);
-        return redirect()->route('albums.show', $album);
+        return redirect()->route('dashboard.albums.show', $album);
     }
 
-    return redirect()->route('photos.show', $photo);
+    return redirect()->route('dashboard.photos.show', $photo);
 }
 
     public function bulkCreate()
@@ -148,7 +158,7 @@ class PhotoController extends Controller
 
             $album = \App\Models\Album::find($validated['album_id']);
 
-            return redirect()->route('albums.show', $album);
+            return redirect()->route('dashboard.albums.show', $album);
         }
 
         return redirect()->route('dashboard.photos');
@@ -176,7 +186,7 @@ class PhotoController extends Controller
 
         $photo->update($validated);
 
-        return redirect()->route('photos.show', $photo);
+        return redirect()->route('dashboard.photos.show', $photo);
     }
 
     public function destroy(Photo $photo)
@@ -188,7 +198,7 @@ class PhotoController extends Controller
 
         $photo->delete();
 
-        return redirect()->route('photos.index');
+        return redirect()->route('dashboard.photos.index');
     }
     public function bulkMove(Request $request){
         $request->validate([
@@ -204,15 +214,21 @@ class PhotoController extends Controller
             ]);
 
 
-        return back()
-            ->with('success', 'Fotos movidas correctamente.');
+        $count = count($request->photos);
+
+    return back()
+    ->with(
+        'success',
+        "✅ {$count} foto" . ($count > 1 ? 's' : '') . " movida" . ($count > 1 ? 's' : '') . " correctamente."
+    );
     }
 
     public function bulkDelete(Request $request){
         $request->validate([
             'photos' => 'required|array|min:1',
-        ]);
-
+            ]);
+            
+            $count = count($request->photos);
         $photos = Photo::whereIn(
             'id',
             $request->photos
@@ -231,6 +247,12 @@ class PhotoController extends Controller
             $request->photos
         )->delete();
 
-        return back();
+        
+
+    return back()
+    ->with(
+        'success',
+        "✅ {$count} foto" . ($count > 1 ? 's' : '') . " eliminada" . ($count > 1 ? 's' : '') . " correctamente."
+    );
     }
 }
